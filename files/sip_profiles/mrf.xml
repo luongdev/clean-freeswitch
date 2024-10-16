@@ -20,6 +20,7 @@
       <param name="enable-timer" value="false"/>
       <param name="username" value="switch"/>
       <param name="apply-nat-acl" value="nat.auto"/>
+      <param name="apply-inbound-acl" value="providers"/>
       <param name="context" value="public"/>
       <param name="rtp-timer-name" value="soft"/>
       <param name="codec-prefs" value="$${global_codec_prefs}"/>
