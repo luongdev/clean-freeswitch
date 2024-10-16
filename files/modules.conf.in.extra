@@ -29,7 +29,7 @@ applications/mod_avmd
 #applications/mod_cluechoo
 applications/mod_commands
 applications/mod_conference
-#applications/mod_curl
+applications/mod_curl
 #applications/mod_cv
 #applications/mod_db
 #applications/mod_directory
@@ -100,8 +100,8 @@ codecs/mod_opus
 #codecs/mod_silk
 #codecs/mod_siren
 #codecs/mod_theora
-#databases/mod_mariadb
-#databases/mod_pgsql
+databases/mod_mariadb
+databases/mod_pgsql
 #dialplans/mod_dialplan_asterisk
 #dialplans/mod_dialplan_directory
 dialplans/mod_dialplan_xml
@@ -151,7 +151,7 @@ formats/mod_tone_stream
 formats/mod_opusfile
 #languages/mod_basic
 #languages/mod_java
-#languages/mod_lua
+languages/mod_lua
 #languages/mod_managed
 #languages/mod_perl
 #languages/mod_python
