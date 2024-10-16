@@ -52,7 +52,6 @@
 
       <!-- Endpoints -->
       <load module="mod_sofia"/>
-      <load module="mod_loopback"/>
       <!-- <load module="mod_rtc"/> -->
       <!-- <load module="mod_rtmp"/>   -->
       <!-- <load module="mod_verto"/>  -->
