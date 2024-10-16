@@ -1,16 +1,14 @@
 <!-- http://wiki.freeswitch.org/wiki/Dialplan_XML -->
 <include>
-  <context name="mrf">
-
-    <!-- establish outbound event socket connection to the address specified in the X-esl-outbound header -->
+  <context name="public">
     <extension name="socket">
-      <condition field="${sip_user_agent}" expression="^drachtio-fsmrf:(.*)$">
+      <condition field="destination_number" expression="^(\d{6,15})$">
         <action application="answer"/> 
         <action application="set" data="send_silence_when_idle=-1"/>
         <action application="set" data="hangup_after_bridge=false"/>
         <action application="set" data="park_after_bridge=true"/>
         <action application="set" data="playback_terminators=none"/>
-        <action application="socket" data="${sip_h_X-esl-outbound} async full"/>
+        <action application="socket" data="$${inbound_sbs} async full"/>
       </condition>
     </extension>
   </context>
