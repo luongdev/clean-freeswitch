@@ -7,7 +7,7 @@
         <action application="set" data="hangup_after_bridge=false"/>
         <action application="set" data="park_after_bridge=true"/>
         <action application="set" data="playback_terminators=none"/>
-        <action application="socket" data="$${inbound_sbs} async full"/>
+        <action application="socket" data="$${inbound_sbc} async full"/>
       </condition>
     </extension>
   </context>
