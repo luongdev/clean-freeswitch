@@ -35,8 +35,8 @@ RUN for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done \
     libspeex-dev libspeexdsp-dev libedit-dev libtiff-dev yasm libswscale-dev haveged libre2-dev \
     libopus-dev libsndfile-dev libshout3-dev libmpg123-dev libmp3lame-dev libopusfile-dev libgoogle-perftools-dev \
     && git config --global http.postBuffer 524288000  \
-  	&& git config --global https.postBuffer 524288000 \
-	  && git config --global pull.rebase true
+    && git config --global https.postBuffer 524288000 \
+    && git config --global pull.rebase true
 
 FROM base AS base-cmake
 WORKDIR /usr/local/src
@@ -92,7 +92,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 RUN git clone --depth 1 -b main https://github.com/drachtio/cobalt-asr-grpc-api.git \
     && cd cobalt-asr-grpc-api \
     && LANGUAGE=cpp make
-        
+
 FROM base-cmake AS websockets
 WORKDIR /usr/local/src
 ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
@@ -225,8 +225,8 @@ RUN cd /usr/local/src/freeswitch \
     && cp /tmp/dialplan/* /usr/local/freeswitch/conf/dialplan/ \
     && cp /tmp/sip_profiles/* /usr/local/freeswitch/conf/sip_profiles/ \
     && cp /usr/local/src/freeswitch/conf/vanilla/autoload_configs/modules.conf.xml /usr/local/freeswitch/conf/autoload_configs \
-	  && sed -i -e 's/global_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8/global_codec_prefs=PCMU,PCMA,OPUS,G722/g' /usr/local/freeswitch/conf/vars.xml \
-	  && sed -i -e 's/outbound_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8/outbound_codec_prefs=PCMU,PCMA,OPUS,G722/g' /usr/local/freeswitch/conf/vars.xml
+    && sed -i -e 's/global_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8/global_codec_prefs=PCMU,PCMA,OPUS,G722/g' /usr/local/freeswitch/conf/vars.xml \
+    && sed -i -e 's/outbound_codec_prefs=OPUS,G722,PCMU,PCMA,H264,VP8/outbound_codec_prefs=PCMU,PCMA,OPUS,G722/g' /usr/local/freeswitch/conf/vars.xml
 
 FROM debian:bullseye-slim AS final
 ARG TARGETARCH
@@ -250,10 +250,18 @@ COPY ./entrypoint.sh /entrypoint.sh
 COPY ./vars_diff.xml  /usr/local/freeswitch/conf/vars_diff.xml
 COPY ./freeswitch.xml /usr/local/freeswitch/conf/freeswitch.xml
 
+RUN mkdir -p /opt/freeswitch/conf
+COPY ./vars.xml /opt/freeswitch/conf/vars.xml
+
 RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready /usr/bin/provider
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["freeswitch"]
 
 # Volumes for persistent data
-VOLUME ["/usr/local/freeswitch/log", "/usr/local/freeswitch/recordings", "/usr/local/freeswitch/sounds"]
+VOLUME [\
+    "/usr/local/freeswitch/log" \
+    , "/usr/local/freeswitch/recordings"\
+    , "/usr/local/freeswitch/sounds" \
+    , "/opt/freeswitch" \
+    ]

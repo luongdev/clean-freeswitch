@@ -1,7 +1,13 @@
 #!/bin/bash
 
+get_ifname_ip() {
+  IFNAME=$1
+  echo "$(ip addr show $IFNAME | grep 'inet ' | awk '{print $2}' | cut -d/ -f1 | head -n 1)"
+}
+
 get_default_ip() {
-  echo "$(ip route show default | awk '/default/ {print $3}')"
+  IFNAME="$(ip route show default | awk '/default/ {print $5}')"
+  echo "$(get_ifname_ip $IFNAME)"
 }
 
 if [ $# -eq 0 ]; then
@@ -14,8 +20,7 @@ elif [ "$1" = "public" ]; then
   fi
   echo "$PUBLIC_IP"
 else
-  IFNAME=$1
-  IP_ADDRESS=$(ip addr show $IFNAME | grep 'inet ' | awk '{print $2}' | cut -d/ -f1 | head -n 1)
+  IP_ADDRESS=$(get_ifname_ip $1)
   if [ -z "$IP_ADDRESS" ]; then
       IP_ADDRESS=$(get_default_ip)
   fi
