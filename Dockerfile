@@ -236,17 +236,20 @@ COPY --from=freeswitch /usr/local/freeswitch/ /usr/local/freeswitch/
 COPY --from=freeswitch /usr/local/bin/ /usr/local/bin/
 COPY --from=freeswitch /usr/local/lib/ /usr/local/lib/
 COPY --from=freeswitch $LIB_DIR/ /usr/lib/
-RUN apt update && apt install -y --quiet --no-install-recommends ca-certificates libsqlite3-0 libcurl4 libpcre3 libspeex1 libspeexdsp1 libedit2 libtiff5 libopus0 libsndfile1 libshout3 \
+RUN apt update && apt install -y --quiet --no-install-recommends iproute2 curl postgresql-client ca-certificates \
+    libsqlite3-0 libcurl4 libpcre3 libspeex1 libspeexdsp1 libedit2 libtiff5 libopus0 libsndfile1 libshout3 \
     && ldconfig && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/usr/local/freeswitch/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
+COPY ./getip.sh /usr/bin/getip
+COPY ./pgready.sh /usr/bin/pgready
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./vars_diff.xml  /usr/local/freeswitch/conf/vars_diff.xml
 COPY ./freeswitch.xml /usr/local/freeswitch/conf/freeswitch.xml
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["freeswitch"]

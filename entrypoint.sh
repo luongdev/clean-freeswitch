@@ -1,10 +1,44 @@
 #!/bin/bash
 set -e
 
-# listen on all interfaces, allow connections from anywhere
-sed -i -e "s/name=\"listen-ip\" value=\".*\"/name=\"listen-ip\" value=\"0.0.0.0\"/g" /usr/local/freeswitch/conf/autoload_configs/event_socket.conf.xml
-sed -i -e "s/<\!--<param name=\"apply-inbound-acl\" value=\"loopback.auto\"\/>-->/<param name=\"apply-inbound-acl\" value=\"socket_acl\"\/>/g" /usr/local/freeswitch/conf/autoload_configs/event_socket.conf.xml
-sed -i -e "s/<\/network-lists>/<list name=\"socket_acl\" default=\"deny\"><node type=\"allow\" cidr=\"0.0.0.0\/0\"\/><\/list><\/network-lists>/g" /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml
+RUN_FILE="/usr/local/freeswitch/.freeswitch"
+FIRST_RUN="0"
+if [ ! -e $RUN_FILE ]; then
+  FIRST_RUN="1"
+fi
+
+LOCAL_IP=$(getip)
+CONTAINER_IP=$(getip "docker0")
+
+if [ ! "$PUBLIC_IP" = "" ]; then
+  PUBLIC_IP=$(getip "public")
+fi
+
+if [ "$FIRST_RUN" = "1" ]; then
+  LB_RN=$(sed -n '/<node type="allow" cidr="127.0.0.1\/32"\/>/=' /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml | head -n 1)
+  LB_RN=${LB_RN:-4}
+
+  sed -i "${LB_RN}a <node type=\"allow\" cidr=\"$LOCAL_IP/24\"/>" /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml
+  sed -i "${LB_RN}a <node type=\"allow\" cidr=\"$CONTAINER_IP/24\"/>" /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml
+
+  DB_HOST=${DB_HOST:-}
+  DB_PORT=${DB_PORT:-}
+  DB_USER=${DB_USER:-}
+  DB_PASS=${DB_PASS:-}
+  DB_NAME=${DB_NAME:-switch}
+  DB_OPTS=${DB_OPTS:-}
+
+  if [ "$DB_HOST" != "" ]; then
+    CORE_DSN="pgsql://hostaddr=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASS dbname=$DB_NAME options='$DB_OPTS'"
+    sed -i '2a <X-PRE-PROCESS cmd="set" data="core_dsn=$CORE_DSN"/>' /usr/local/freeswitch/conf/vars.xml
+    pgready -h $DB_HOST -p $DB_PORT -U $DB_USER -P $DB_PASS -t 15 -w
+
+    for var in $(compgen -v | grep '^DB_'); do
+      unset $var
+      echo "Unset: $var"
+    done
+  fi
+fi
 
 if [ "$1" = 'freeswitch' ]; then
   shift
@@ -122,7 +156,14 @@ while :; do
     shift
     shift
     ;;
-
+  --auto)
+      sed -i '2a <X-PRE-PROCESS cmd="set" data="local_ip_v4=$LOCAL_IP"/>' /usr/local/freeswitch/conf/vars_diff.xml
+      if [ "$PUBLIC_IP" != "$LOCAL_IP" ]; then
+        sed -i -e "s/ext_sip_ip=.*\"/ext_sip_ip=$PUBLIC_IP\"/g" /usr/local/freeswitch/conf/vars_diff.xml
+        sed -i -e "s/ext_rtp_ip=.*\"/ext_rtp_ip=$PUBLIC_IP\"/g" /usr/local/freeswitch/conf/vars_diff.xml
+      fi
+    shift
+    ;;
   --)
     shift
     break

@@ -18,18 +18,30 @@ This container supports the ability to configure the various ports Freeswitch cl
 
 An example of starting a container with advanced options:
 ```bash
-docker run -d --rm --name switch --net=host \
+docker run -d --rm --name FS1 --net=host \
 -v /home/deploy/log:/usr/local/freeswitch/log  \
 -v /home/deploy/sounds:/usr/local/freeswitch/sounds \
 -v /home/deploy/recordings:/usr/local/freeswitch/recordings \
-freeswitch freeswitch --sip-port 5038 --tls-port 5039 --rtp-range-start 20000 --rtp-range-end 21000
+luongld/freeswitch freeswitch --sip-port 5038 --tls-port 5039 --rtp-range-start 20000 --rtp-range-end 21000
 ```
 ### OR
 
 ```bash
-docker run -d --rm --name FS1 --net=host --cap-add=SYS_NICE freeswitch freeswitch \
+docker run -d --rm --name FS1 --net=host --cap-add=SYS_NICE luongld/freeswitch freeswitch \
   --sip-port 5080 --tls-port 5081 --rtp-range-start 31000 --rtp-range-end 32000 \
   --advertise-external-ip --ext-sip-ip 35.247.154.244 --ext-rtp-ip 35.247.154.244
+```
+
+### OR
+```bash
+docker run -d \
+  -e DB_HOST="127.0.0.1" \
+  -e DB_PORT="6932" \
+  -e DB_NAME="freeswitch" \
+  -e DB_USER="postgres" \
+  -e DB_PASS="Default#Postgres@6699" \
+  --name FS1 --net=host --cap-add=SYS_NICE luongld/freeswitch freeswitch \
+  --sip-port 5080 --tls-port 5081 --rtp-range-start 31000 --rtp-range-end 32000 --auto
 ```
 
 ### modules.conf.xml
