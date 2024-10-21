@@ -2,6 +2,10 @@
 set -e
 
 RUN_FILE="/usr/local/freeswitch/.freeswitch"
+PASS_FILE="/usr/local/freeswitch/.pass"
+
+echo "Default#Switch@6699" > "$PASS_FILE"
+
 FIRST_RUN="0"
 if [ ! -e $RUN_FILE ]; then
   FIRST_RUN="1"
@@ -121,6 +125,7 @@ if [ "$1" = 'freeswitch' ]; then
 
     -p|--password)
       if [ -n "$2" ]; then
+        echo "$2" > "$PASS_FILE"
         sed -i -e "s/name=\"password\" value=\"Default#Switch@6699\"/name=\"password\" value=\"$2\"/g" /usr/local/freeswitch/conf/autoload_configs/event_socket.conf.xml
       fi
       shift

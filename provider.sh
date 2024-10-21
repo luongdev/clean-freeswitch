@@ -1,7 +1,15 @@
 #!/bin/bash
 
+PASS_FILE="/usr/local/freeswitch/.pass"
 FILE_NAME="/usr/local/freeswitch/conf/autoload_configs/acl.conf.xml"
 PROVIDERS_RN=$(sed -n '/<list name="providers" default=".*">/=' /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml | head -n 1)
+
+reload_acl() {
+    PWD="$(cat $PASS_FILE)"
+    PWD=${PWD:-Default#Switch@6699}
+
+    fs_cli -p $PWD -x "reloadacl"
+}
 
 add_provider() {
     local cidr="$1"
@@ -36,3 +44,5 @@ else
     echo "Usage: $0 provider add|del [CIDR]"
     exit 1
 fi
+
+reload_acl
