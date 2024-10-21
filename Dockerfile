@@ -1,6 +1,6 @@
 FROM debian:bullseye-slim AS base
 
-ARG BUILD_CPUS=1
+ARG BUILD_CPUS=2
 
 ## # this will be populated from the vaule in .env file
 ARG CMAKE_VERSION 
@@ -245,11 +245,12 @@ ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 COPY ./getip.sh /usr/bin/getip
 COPY ./pgready.sh /usr/bin/pgready
+COPY ./provider.sh /usr/bin/provider
 COPY ./entrypoint.sh /entrypoint.sh
 COPY ./vars_diff.xml  /usr/local/freeswitch/conf/vars_diff.xml
 COPY ./freeswitch.xml /usr/local/freeswitch/conf/freeswitch.xml
 
-RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready
+RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready /usr/bin/provider
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["freeswitch"]

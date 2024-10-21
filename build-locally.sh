@@ -30,3 +30,5 @@ docker build \
   --build-arg FREESWITCH_MODULES_VERSION="${freeswitchModulesVersion}" \
   --build-arg FREESWITCH_VERSION="${freeswitchVersion}" \
   . --tag "${dockerImageRepo}:${dockerImageVersion}"
+
+docker push "${dockerImageRepo}:${dockerImageVersion}"
