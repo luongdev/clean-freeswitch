@@ -43,7 +43,7 @@ docker run -d \
   -e DB_PASS="Default#Postgres@6699" \
   -v "./recordings:/usr/local/freeswitch/recordings" \
   -v "./opt:/opt/freeswitch" \
-  --name FS1 --net=host --cap-add=SYS_NICE luongld/freeswitch freeswitch \
+  --name FS1 --net=host --cap-add=SYS_NICE luongld/botswitch freeswitch \
   --sip-port 5080 --tls-port 5081 --rtp-range-start 31000 --rtp-range-end 32000 --auto
 ```
 
