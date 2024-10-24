@@ -253,7 +253,7 @@ COPY ./freeswitch.xml /usr/local/freeswitch/conf/freeswitch.xml
 RUN mkdir -p /opt/freeswitch/conf
 COPY ./vars.xml /opt/freeswitch/conf/vars.xml
 
-RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready /usr/bin/provider
+RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready /usr/bin/acl
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["freeswitch"]
