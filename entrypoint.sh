@@ -24,6 +24,7 @@ if [ "$FIRST_RUN" = "1" ]; then
   echo "Detect public_ip: $PUBLIC_IP"
 
   mkdir -p /opt/freeswitch/conf
+  mv /tmp/vars.xml /opt/freeswitch/conf/vars.xml
 
   LB_RN=$(sed -n '/<node type="allow" cidr="127.0.0.1\/32"\/>/=' /usr/local/freeswitch/conf/autoload_configs/acl.conf.xml | head -n 1)
   LB_RN=${LB_RN:-4}

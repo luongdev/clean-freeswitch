@@ -250,8 +250,7 @@ COPY ./entrypoint.sh /entrypoint.sh
 COPY ./vars_diff.xml  /usr/local/freeswitch/conf/vars_diff.xml
 COPY ./freeswitch.xml /usr/local/freeswitch/conf/freeswitch.xml
 
-RUN mkdir -p /opt/freeswitch/conf
-COPY ./vars.xml /opt/freeswitch/conf/vars.xml
+COPY ./vars.xml /tmp/vars.xml
 
 RUN chmod +x /entrypoint.sh /usr/bin/getip /usr/bin/pgready /usr/bin/acl
 
