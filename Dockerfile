@@ -96,6 +96,7 @@ RUN git clone --depth 1 -b main https://github.com/drachtio/cobalt-asr-grpc-api.
 FROM base-cmake AS websockets
 WORKDIR /usr/local/src
 ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
+RUN apt -yq install  libogg-dev libspeex-dev libspeexdsp-dev  libboost-dev libssl-dev
 RUN git clone --depth 1 -b v$LIBWEBSOCKETS_VERSION https://github.com/warmcat/libwebsockets.git \
     && cd /usr/local/src/libwebsockets \
     && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo && make && make install
